@@ -9,29 +9,6 @@ from . import tp_link_cipher
 import ast
 import pkgutil
 
-#Old Functions to get device list from tplinkcloud
-def getToken(email, password):
-	URL = "https://eu-wap.tplinkcloud.com"
-	Payload = {
-	 "method": "login",
-	 "params": {
-	 "appType": "Tapo_Ios",
-	 "cloudUserName": email,
-	 "cloudPassword": password,
-	 "terminalUUID": "0A950402-7224-46EB-A450-7362CDB902A2"
-	 }
-	}
-
-	return requests.post(URL, json=Payload).json()['result']['token']
-
-def getDeviceList(email, password):
-	URL = "https://eu-wap.tplinkcloud.com?token=" + getToken(email, password)
-	Payload = {
-	 "method": "getDeviceList",
-	}
-
-	return requests.post(URL, json=Payload).json()
-
 ERROR_CODES = {
 	"0": "Success",
 	"-1010": "Invalid Public Key Length",
@@ -157,6 +134,12 @@ class P100():
 			errorCode = ast.literal_eval(decryptedResponse)["error_code"]
 			errorMessage = self.errorCodes[str(errorCode)]
 			raise Exception(f"Error Code: {errorCode}, {errorMessage}")
+	
+	def getMacAddress(self):
+		resp = self.getDeviceInfo()
+		macaddr = json.loads(resp)["result"]["mac"]
+		self.terminalUUID = macaddr
+		return macaddr
 
 	def turnOn(self):
 		URL = f"http://{self.ipAddress}/app?token={self.token}"
@@ -166,6 +149,7 @@ class P100():
 				"device_on": True
 			},
 			"requestTimeMils": int(round(time.time() * 1000)),
+			"terminalUUID": self.terminalUUID
 		}
 
 		headers = {
@@ -197,6 +181,7 @@ class P100():
 				"brightness": brightness
 			},
 			"requestTimeMils": int(round(time.time() * 1000)),
+			"terminalUUID": self.terminalUUID		
 		}
 
 		headers = {
@@ -228,6 +213,7 @@ class P100():
 				"device_on": False
 			},
 			"requestTimeMils": int(round(time.time() * 1000)),
+			"terminalUUID": self.terminalUUID
 		}
 
 		headers = {

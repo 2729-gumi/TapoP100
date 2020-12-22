@@ -1,3 +1,25 @@
+:warning: **This repository is a fork of [fishbigger/TapoP100](https://github.com/fishbigger/TapoP100).** :warning:
+
+Some modifications were applied to control **Tapo P105** smartplugs.
+
+## Usage
+
+```python
+from PyP100 import PyP100
+
+p105 = PyP100.P100("192.168.X.X", "email@gmail.com", "Password123") # Creating a P105 plug object
+
+p105.handshake() # Creates the cookies required for further methods 
+p105.login() # Sends credentials to the plug and creates AES Key and IV for further methods
+p105.getMacAddress() # Get MacAddress and Set terminalUUID
+
+p105.turnOn() # Sends the turn on request
+p105.turnOff() # Sends the turn off request
+p105.getDeviceInfo() # Returns dict with all the device info
+```
+
+The following document is the original `README.md`.
+
 # Tapo P100
 Tapo P100 is a Python library for controlling the Tp-link Tapo P100 plugs and L510E bulbs.
 
